@@ -117,7 +117,7 @@ activity:
 
 place:
   adding_supported: true
-  add_button_label: _(Add a Place)
+  add_button_label: _(Share your thoughts)
   # Labels for the buttons that toggle the map and list views
   show_list_button_label: _(List All Places)
   show_map_button_label: _(Show the Map)
