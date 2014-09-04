@@ -20,8 +20,11 @@ var Shareabouts = Shareabouts || {};
           responses = [],
           url = window.location.toString(),
           urlParts = url.split('response/'),
+          // will be "mobile" or "desktop", as defined in default.css
+          layout = window.getComputedStyle(document.body,':after').getPropertyValue('content'),
           responseIdToScrollTo,
-          $responseToScrollTo;
+          $responseToScrollTo,
+          data;
 
       // get the response id from the url
       if (urlParts.length === 2) {
@@ -45,12 +48,14 @@ var Shareabouts = Shareabouts || {};
         }));
       });
 
-      this.$el.html(Handlebars.templates['place-detail-survey']({
+      data = _.extend({
         responses: responses,
         has_single_response: (responses.length === 1),
         user_token: this.options.userToken,
         survey_config: this.options.surveyConfig
-      }));
+      }, S.stickyFieldValues);
+
+      this.$el.html(Handlebars.templates['place-detail-survey'](data));
 
       // get the element based on the id
       $responseToScrollTo = this.$el.find('[data-response-id="'+ responseIdToScrollTo +'"]');
@@ -58,8 +63,14 @@ var Shareabouts = Shareabouts || {};
       // call scrollIntoView()
       if ($responseToScrollTo.length > 0) {
         setTimeout(function() {
-          $responseToScrollTo.get(0).scrollIntoView();
-        }, 500);
+          // For desktop, the panel content is scrollable
+          if (layout === 'desktop') {
+            $('#content article').scrollTo($responseToScrollTo);
+          } else {
+            // For mobile, it's the window
+            $(window).scrollTo($responseToScrollTo);
+          }
+        }, 700);
       }
 
       return this;
@@ -88,6 +99,8 @@ var Shareabouts = Shareabouts || {};
       spinner = new Spinner(S.smallSpinnerOptions).spin(this.$('.form-spinner')[0]);
 
       S.Util.log('USER', 'place', 'submit-reply-btn-click', this.collection.options.placeModel.getLoggingDetails(), this.collection.size());
+
+      S.Util.setStickyFields(attrs, S.Config.survey.items, S.Config.place.items);
 
       // Create a model with the attributes from the form
       this.collection.create(attrs, {

@@ -10,6 +10,12 @@ body {
   text-align: left;
 }
 
+/* A helper to let the JS know what kind of layout we're using */
+body:after {
+  content: "mobile";
+  display: none;
+}
+
 /* Links */
 a, a:active, a:visited {
   color: #007fbf;
@@ -463,6 +469,10 @@ a.logout-btn {
   border-bottom: 1px solid #666;
 }
 #add-place {}
+
+.content-visible #add-place-btn-container {
+  display: none; /* hide the add button on mobile when the panel is open */
+}
 
 /* Center Point (new point icon) */
 #centerpoint {
@@ -1157,6 +1167,15 @@ input.geocode-address-field:focus {
   margin-bottom: 0;
 }
 
+.geocode-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 2em;
+  background-color: #6f6f6f;
+}
+
 
 /* =Footer
 -------------------------------------------------------------- */
@@ -1271,6 +1290,11 @@ a.close-unsupported-overlay {
   body {
     height: 100%;
     position: relative;
+  }
+
+  /* A helper to let the JS know what kind of layout we're using */
+  body:after {
+    content: "desktop";
   }
 
   /* Header */
@@ -1429,6 +1453,12 @@ a.close-unsupported-overlay {
   #add-place-btn-container .btn:link {
     padding-right: 1em;
     padding-left: 1em;
+  }
+  .content-visible #add-place-btn-container {
+    display: block; /* override of the mobile style */
+  }
+  .place-form-visible #add-place-btn-container {
+    display: none;
   }
 
   /* Content */

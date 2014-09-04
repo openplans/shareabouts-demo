@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load shareabouts_utils %}
 {% load url from future %}
+{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]-->
@@ -55,7 +56,7 @@
   <![endif]-->
 
 </head>
-<body>
+<body class="{% if config.map.geocoding_enabled %} geocoding-enabled{% endif %}">
 
   <header id="site-header" class="clearfix{% if pages_config %} has-pages{% endif %}">
     <h1 id="site-title">{% block site-title %}{% endblock %}</h1>
@@ -151,7 +152,7 @@
   <script src="{{settings.COMPRESS_URL}}libs/backbone.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/backbone.marionette.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/handlebars-1.0.0.js"></script>
-  <script src="{{settings.COMPRESS_URL}}libs/moment.min.js"></script>
+  <script src="{{settings.COMPRESS_URL}}libs/moment-with-locales.min.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/json2.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/leaflet.argo.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/binaryajax.js"></script>
@@ -160,12 +161,18 @@
   <script src="{{settings.COMPRESS_URL}}libs/canvas-to-blob.min.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/spin.min.js"></script>
   <script src="{{settings.COMPRESS_URL}}libs/gatekeeper.js"></script>
+  <script src="{{settings.COMPRESS_URL}}libs/swag.min.js"></script>
+  <script src="{{settings.COMPRESS_URL}}libs/jquery.scrollTo.js"></script>
 
   <script src="{{settings.COMPRESS_URL}}js/utils.js"></script>
   <script src="{{settings.COMPRESS_URL}}js/template-helpers.js"></script>
+  <!-- https://github.com/openplans/handlebars-helpers -->
+  <script src="{{settings.COMPRESS_URL}}libs/handlebars-helpers.js"></script>
   {% endcompress %}
 
   <script>
+    moment.locale('{{LANGUAGE_CODE}}');
+
     $(function() {
       // Check official browser support.
       var userAgent = {{ user_agent_json|safe }};
@@ -234,8 +241,6 @@
   {% handlebarsjs 'pages/*' precompile %}
 
   <script type="text/javascript">
-  // moment.lang({{locale}});
-
   (function(S, $){
     // Boostrapping the place types and their icons
     S.Config = {

@@ -23,7 +23,7 @@ var Shareabouts = Shareabouts || {};
         place_config: this.options.placeConfig,
         user_token: this.options.userToken,
         current_user: S.currentUser
-      }, this.model.toJSON());
+      }, S.stickyFieldValues, this.model.toJSON());
 
       this.$el.html(Handlebars.templates['place-form'](data));
       return this;
@@ -41,7 +41,7 @@ var Shareabouts = Shareabouts || {};
       this.$('.drag-marker-instructions, .drag-marker-warning').addClass('is-visuallyhidden');
     },
     setLocation: function(location) {
-      this.locationText = location;
+      this.location = location;
     },
     // Get the attributes from the form
     getAttrs: function() {
@@ -59,8 +59,8 @@ var Shareabouts = Shareabouts || {};
         coordinates: [this.center.lng, this.center.lat]
       };
 
-      if (this.locationText && locationAttr) {
-        attrs[locationAttr] = this.locationText;
+      if (this.location && locationAttr) {
+        attrs[locationAttr] = this.location;
       }
 
       return attrs;
@@ -129,6 +129,8 @@ var Shareabouts = Shareabouts || {};
       spinner = new Spinner(S.smallSpinnerOptions).spin(this.$('.form-spinner')[0]);
 
       S.Util.log('USER', 'new-place', 'submit-place-btn-click');
+
+      S.Util.setStickyFields(attrs, S.Config.survey.items, S.Config.place.items);
 
       // Save and redirect
       this.model.save(attrs, {

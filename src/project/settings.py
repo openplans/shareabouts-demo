@@ -282,6 +282,8 @@ if 'GOOGLE_ANALYTICS_ID' in env:
 if 'GOOGLE_ANALYTICS_DOMAIN' in env:
     GOOGLE_ANALYTICS_DOMAIN = env.get('GOOGLE_ANALYTICS_DOMAIN')
 
+MAPQUEST_KEY = env.get('MAPQUEST_KEY', 'Fmjtd%7Cluur2g0bnl%2C25%3Do5-9at29u')
+
 ##############################################################################
 # Local settings overrides
 # ------------------------
@@ -307,3 +309,14 @@ if 'CONFIG' not in SHAREABOUTS:
 if 'PACKAGE' not in SHAREABOUTS:
     SHAREABOUTS['PACKAGE'] = '.'.join(['flavors', flavor])
     INSTALLED_APPS = (SHAREABOUTS['PACKAGE'],) + INSTALLED_APPS
+
+
+##############################################################################
+# Locale paths
+# ------------
+# Help Django find any translation files.
+
+LOCALE_PATHS = (
+    os.path.join(HERE, '..', 'sa_web', 'locale'),
+    os.path.join(HERE, '..', 'flavors', flavor, 'locale'),
+)

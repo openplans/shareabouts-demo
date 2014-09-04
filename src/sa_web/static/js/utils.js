@@ -66,6 +66,34 @@ var Shareabouts = Shareabouts || {};
       return false;
     },
 
+    // NOTE this is not in Shareabouts.js
+    // Keeps a cache of "sticky" form fields in memory. This cache is set when
+    // the user submits a place or survey form, and is used to prepopulate both
+    // forms. NOTE that the cache is shared between both forms, so, for example,
+    // `submitter_name` in both places will have a shared default value (if
+    // sticky: true in config.yml).
+    setStickyFields: function(data, surveyItemsConfig, placeItemsConfig) {
+      // Make an array of sticky field names
+      var stickySurveyItemNames = _.pluck(_.filter(surveyItemsConfig, function(item) {
+            return item.sticky; }), 'name'),
+          stickyPlaceItemNames = _.pluck(_.filter(placeItemsConfig, function(item) {
+            return item.sticky; }), 'name'),
+          // Array of both place and survey sticky field names
+          stickyItemNames = _.union(stickySurveyItemNames, stickyPlaceItemNames);
+
+      // Create the cache
+      if (!S.stickyFieldValues) {
+        S.stickyFieldValues = {};
+      }
+
+      _.each(stickyItemNames, function(name) {
+        // Check for existence of the key, not the truthiness of the value
+        if (name in data) {
+          S.stickyFieldValues[name] = data[name];
+        }
+      });
+    },
+
     // ====================================================
     // Event and State Logging
 
@@ -306,8 +334,12 @@ var Shareabouts = Shareabouts || {};
     MapQuest: {
       geocode: function(location, bounds, options) {
         var mapQuestKey = S.bootstrapped.mapQuestKey;
+
+        if (!mapQuestKey) throw "You must provide a MapQuest key for geocoding to work.";
+
         options = options || {};
         options.dataType = 'jsonp';
+        options.cache = true;
         options.url = 'http://open.mapquestapi.com/geocoding/v1/address?key=' + mapQuestKey + '&location=' + location;
         if (bounds) {
           options.url += '&boundingBox=' + bounds.join(',');
@@ -316,19 +348,17 @@ var Shareabouts = Shareabouts || {};
       },
       reverseGeocode: function(latLng, options) {
         var mapQuestKey = S.bootstrapped.mapQuestKey,
-            lat = latLng.lat || latLng[0],
-            lng = latLng.lng || latLng[1];
+            lat, lng;
+
+        if (!mapQuestKey) throw "You must provide a MapQuest key for geocoding to work.";
+
+        lat = latLng.lat || latLng[0];
+        lng = latLng.lng || latLng[1];
         options = options || {};
         options.dataType = 'jsonp';
+        options.cache = true;
         options.url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey + '&location=' + lat + ',' + lng;
         $.ajax(options);
-      },
-      getLocationString: function(locationData) {
-        if (locationData.geocodeQuality == 'ADDRESS') {
-          return locationData.street + ', ' + locationData.adminArea5 + ' ' + locationData.adminArea3;
-        } else {
-          return '';
-        }
       }
     }
   };
