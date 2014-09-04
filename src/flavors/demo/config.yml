@@ -36,7 +36,7 @@ map:
     maxZoom: 17
   layers:
     - url: http://{s}.tiles.mapbox.com/v3/openplans.map-dmar86ym/{z}/{x}/{y}.png
-      attribution: '&copy; OpenStreetMap contributors, CC-BY-SA. <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
+      attribution: '&copy; OpenStreetMap contributors, CC-BY-SA. <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a> Geocoding Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">.'
     - url: /static/data/philadelphia.geojson
       type: json
       rules:
@@ -127,13 +127,13 @@ place:
   anonymous_name: _(Someone)
   submit_button_label: _(Submit)
 
-  location_item_name: name
+  location_item_name: location
 
   items:
     - prompt: _(Your Name)
       type: text
       name: submitter_name
-      optional: true
+      sticky: true
       attrs:
         - key: placeholder
           value: _(Name)
@@ -141,6 +141,7 @@ place:
           value: 30
     - prompt: _(Your Email)
       type: text
+      sticky: true
       name: private-submitter_email
       optional: true
       attrs:
